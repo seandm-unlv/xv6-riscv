@@ -1,5 +1,5 @@
-#include <kernal/types.h>
-#include <kernal/stat.h>
+#include <kernel/types.h>
+#include <kernel/stat.h>
 #include <user.user.h>
 int main ()
 {
