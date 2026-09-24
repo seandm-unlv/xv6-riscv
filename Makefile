@@ -146,7 +146,7 @@ UPROGS=\
 	$U/_grind\
 	$U/_wc\
 	$U/_zombie\
-	$U_testtracing\
+	$U/_testtracing\
 	$U/_logstress\
 	$U/_forphan\
 	$U/_dorphan\
