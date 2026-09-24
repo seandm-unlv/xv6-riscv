@@ -135,7 +135,7 @@ static uint64 (*syscalls[])(void) = {
   // clang-format on
 };
 
-static char *syscalls[] = {
+static char *syscalls_names[] = {
   // clang-format off
   [SYS_fork]    = "fork",
   [SYS_exit]    = "exit",
@@ -159,7 +159,7 @@ static char *syscalls[] = {
   [SYS_mkdir]   = "mkdir",
   [SYS_close]   = "close",
   [SYS_sync]    = "sync",
-  [SYS_syscalltrace] = sys_syscalltrace,
+  [SYS_syscalltrace] = "syscalltrace",
   // clang-format on
 };
 
@@ -180,6 +180,6 @@ syscall(void)
     p->trapframe->a0 = -1;
   }
   if(p->tracing){
-    printf("PID %d: %s\n", p->pid, syscalls_name[num]);
+    printf("PID %d: %s\n", p->pid, syscalls_names[num]);
   }
 }
