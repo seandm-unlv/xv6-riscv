@@ -114,7 +114,8 @@ sys_uptime(void)
 uint64
 sys_syscalltrace(void)
 {
-  int enable = argint(0);
+  int enable;
+  argint(0, &enable);
   myproc()->tracing = enable;
   return 0;
 }
