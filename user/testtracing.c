@@ -9,23 +9,23 @@ int main()
   printf("Process Uptime: %d\n", up);
   printf("Testing syscalltrace() implimentation...\n");
   
-  syscalltrace(1);
+  syscalltrace();
   sbrk(1);
   getpid();
-  pause();
+  pause(1);
 
   int pid = fork();
 
   if(pid < 0);
   {
-    printf("fork failed\n")l
+    printf("fork failed\n");
     exit(0);
   }
 
   if(pid == 0)
   {
-    printf(Child Tracking Value: %d\n", syscalltrace(0);
-    uptime;
+    printf("Child Tracking Value: %d\n", syscalltrace());
+    uptime();
     exit(0);
   }
   else
