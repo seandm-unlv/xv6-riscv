@@ -101,4 +101,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  // determines if the the PCB is allowed to trace syscalls made by this process
+  int tracing;
 };
