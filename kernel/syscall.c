@@ -142,7 +142,7 @@ syscall(void)
   struct proc *p = myproc();
 
   if(p->tracing){
-    printf("PID %d: %s\n", p-pid, syscalls[num]);
+    printf("PID %d: %s\n", p->pid, syscalls[num]);
   }
 
   num = p->trapframe->a7;
