@@ -16,7 +16,7 @@ int main()
 
   int pid = fork();
 
-  if(pid < 0);
+  if(pid < 0)
   {
     printf("fork failed\n");
     exit(0);
