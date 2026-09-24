@@ -180,6 +180,6 @@ syscall(void)
     p->trapframe->a0 = -1;
   }
   if(p->tracing){
-    printf("PID %d: %s\n", p->pid, syscalls_names[num]);
+    printk("PID %d: %s\n", p->pid, syscalls_names[num]);
   }
 }
