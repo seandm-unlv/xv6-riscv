@@ -110,3 +110,12 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_syscalltrace(void)
+{
+  int enable;
+  argint(0, &enable);
+  myproc()->tracing = enable;
+  return 0;
+}
