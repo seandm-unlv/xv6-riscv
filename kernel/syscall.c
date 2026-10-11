@@ -131,7 +131,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_mkdir]   = sys_mkdir,
   [SYS_close]   = sys_close,
   [SYS_sync]    = sys_sync,
-  [SYS_debug]   = sys_debug,     // added in project 3
+  //[SYS_debug]   = sys_debug,     // added in project 3
   // clang-format on
 };
 
