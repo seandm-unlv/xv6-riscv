@@ -18,6 +18,10 @@ struct spinlock pid_lock;
 extern void forkret(void);
 static void freeproc(struct proc *p);
 
+// added in project 3
+int mode = 0;         // (0) - run
+                      // (1) - debug
+
 extern char trampoline[]; // trampoline.S
 
 // helps ensure that wakeups of wait()ing
