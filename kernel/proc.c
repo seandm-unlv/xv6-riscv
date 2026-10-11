@@ -281,6 +281,10 @@ kfork(void)
   // Cause fork to return 0 in the child.
   np->trapframe->a0 = 0;
 
+  //ADDED in project 3 for 
+  np->priority = 10;        // defaults priority and number of epoch slots
+  np->num_epoch_slots = 0;
+  
   // increment reference counts on open file descriptors.
   for (i = 0; i < NOFILE; i++)
     if (p->ofile[i])
