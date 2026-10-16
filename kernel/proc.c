@@ -711,8 +711,6 @@ procdump(void)
 uint64 
 sys_debug(int enable)
 {
-  extern int mode; // accesses etxernal varibale of mode from proc.c
-  
   if (enable > 1 || enable < 0)   // error if enale != (0 || 1)
   {
     return -1;
