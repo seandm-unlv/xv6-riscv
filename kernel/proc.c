@@ -458,6 +458,11 @@ scheduler(void)
         // before jumping back to us.
         p->state = RUNNING;
         c->proc = p;
+
+        if (mode == 1) {
+          printk("PID=%d Priority=%d\n", p->pid, p->priority);
+        }
+        
         swtch(&c->context, &p->context);
 
         // Don't re-enable interrupts on release.
