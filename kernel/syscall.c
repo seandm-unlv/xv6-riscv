@@ -103,8 +103,8 @@ extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
 extern uint64 sys_sync(void);
-extern uint64 sys_debug(int);    // added in project 3
-extern uint64 sys_priorityfork(int);  // added in project 3
+extern uint64 sys_debug(void);    // added in project 3
+extern uint64 sys_priorityfork(void);  // added in project 3
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -132,7 +132,8 @@ static uint64 (*syscalls[])(void) = {
   [SYS_mkdir]   = sys_mkdir,
   [SYS_close]   = sys_close,
   [SYS_sync]    = sys_sync,
-  //[SYS_debug]   = sys_debug,     // added in project 3
+  [SYS_debug]   = sys_debug,     // added in project 3
+  [SYS_priorityfork] = sys_priorityfork,
   // clang-format on
 };
 
