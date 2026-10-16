@@ -110,3 +110,25 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64 
+sys_debug(int enable)
+{
+  extern int mode; // accesses etxernal varibale of mode from proc.c
+  
+  if (enable > 1 || enable < 0)   // error if enale != (0 || 1)
+  {
+    return -1;
+  }
+
+  if (enable != 0) // debug on if enable != 0
+  {
+    mode = 1;
+  }
+  else if (enable == 0) // debug off if enable == 0
+  {
+    mode = 0;
+  }
+
+  return 0;
+}
