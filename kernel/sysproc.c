@@ -136,5 +136,13 @@ sys_debug(int enable)
 uint64 
 sys_priorityfork(void)
 {
-  return 0;
+  int priority;
+
+  argint(0, &priority);
+  
+  if (priority < 0 || priority > 19) {
+    return -1;
+  }
+
+  return priorityfork(priority);
 }
