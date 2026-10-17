@@ -315,7 +315,60 @@ kfork(void)
 uint64 
 sys_priorityfork(int priority)
 {
-  return 0;
+  int i, pid;
+  struct proc *np;
+  struct proc *p = myproc();
+
+  if (priority < 0 || priority > 19) { // added in project 3
+    return -1;
+  }
+
+  // Allocate process.
+  if ((np = allocproc()) == 0) {
+    return -1;
+  }
+
+  // Copy user memory from parent to child.
+  if (uvmcopy(p->pagetable, np->pagetable, p->sz) < 0) {
+    freeproc(np);
+    release(&np->lock);
+    return -1;
+  }
+  np->sz = p->sz;
+
+  // copy saved user registers.
+  *(np->trapframe) = *(p->trapframe);
+
+  // Cause fork to return 0 in the child.
+  np->trapframe->a0 = 0;
+
+  
+  
+  // increment reference counts on open file descriptors.
+  for (i = 0; i < NOFILE; i++)
+    if (p->ofile[i])
+      np->ofile[i] = filedup(p->ofile[i]);
+  np->cwd = idup(p->cwd);
+
+  safestrcpy(np->name, p->name, sizeof(p->name));
+
+  //ADDED in project 3 for 
+  np->priority = priority;        // defaults priority and number of epoch slots
+  np->num_epoch_slots = 0;
+
+  pid = np->pid;
+
+  release(&np->lock);
+
+  acquire(&wait_lock);
+  np->parent = p;
+  release(&wait_lock);
+
+  acquire(&np->lock);
+  np->state = RUNNABLE;
+  release(&np->lock);
+
+  return pid;
 }
 
 // Pass p's abandoned children to init.
