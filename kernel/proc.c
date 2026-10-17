@@ -312,8 +312,8 @@ kfork(void)
   return pid;
 }
 
-uint64 
-sys_priorityfork(int priority)
+int 
+priorityfork(int priority)
 {
   int i, pid;
   struct proc *np;
