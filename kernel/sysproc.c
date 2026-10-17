@@ -132,3 +132,9 @@ sys_debug(int enable)
 
   return 0;
 }
+
+uint64 
+sys_priorityfork(void)
+{
+  return 0;
+}
