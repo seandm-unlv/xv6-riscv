@@ -40,7 +40,7 @@ int is_armstrong(int n)
     return sum == n;
 }
 
-void count_armstrong(int limit)
+int count_armstrong(int limit)
 {
     int count = 0;
 
@@ -49,40 +49,47 @@ void count_armstrong(int limit)
             count++;
     }
 
-    printf("PID %d found %d Armstrong numbers\n",
-           getpid(),
-           count);
+    return count;
 }
 
 int
 main(int argc, char *argv[])
 {
-    int limit = 1000000;
+    
+    int debug_val;
+    char debug_char[2];
+    int priorities[8] = {0, 0, 5, 5, 10, 10, 15, 15};
 
-    if(argc > 1)
-        limit = atoi(argv[1]);
+    printf("Enter a Debug Value (Must be either 0 or 1):\n");
+    read(0, debug_char, 2);
+    debug_char[1] = '\0';
 
-    debug(1);
-
-    int priorities[8] = {
-        0, 0,
-        5, 5,
-        10, 10,
-        15, 15
-    };
+    debug_val = atoi(debug_char);
+    debug(debug_val);
 
     for(int i = 0; i < 8; i++){
-        int pid = priority_fork(priorities[i]);
-
-        if(pid < 0){
-            printf("priority_fork failed\n");
-            exit(1);
-        }
+        int pid = priorityfork(priorities[i]);
 
         if(pid == 0){
-            count_armstrong(limit);
+
+            int start = uptime();
+
+            int count = count_armstrong(1000000);
+
+            int end = uptime();
+
+            printf("\nProcess %d:\n", getpid());
+            printf("Number of Armstrong Numbers between 2 and 1000000: %d\n",
+                   count);
+            printf("Time for process to complete:%dticks\n",
+                   end - start);
+
             exit(0);
         }
+
+        printf("\nForking a process with PID: %d and Priority: %d\n",
+               pid,
+               priorities[i]);
     }
 
     for(int i = 0; i < 8; i++){
