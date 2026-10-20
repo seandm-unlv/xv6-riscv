@@ -116,19 +116,11 @@ sys_uptime(void)
 uint64 
 sys_debug(int enable)
 { 
-  if (enable > 1 || enable < 0)   // error if enale != (0 || 1)
-  {
-    return -1;
-  }
+  int enable;
 
-  if (enable != 0) // debug on if enable != 0
-  {
-    mode = 1;
-  }
-  else if (enable == 0) // debug off if enable == 0
-  {
-    mode = 0;
-  }
+  argint(0, &enable);
+
+  mode = enable;
 
   return 0;
 }
