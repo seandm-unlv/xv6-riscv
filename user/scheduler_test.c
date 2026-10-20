@@ -71,7 +71,6 @@ main(int argc, char *argv[])
     if(debug_val != 0 && debug_val != 1) {
         printf("Invalid Debug Value! Continuing with debug=1");
         debug_val = 1;
-        exit(1);
     }
 
     debug(debug_val);
