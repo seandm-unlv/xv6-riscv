@@ -114,7 +114,7 @@ sys_uptime(void)
 }
 
 uint64 
-sys_debug(int enable)
+sys_debug(void)
 { 
   int enable;
 
