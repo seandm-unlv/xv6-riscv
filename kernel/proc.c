@@ -497,9 +497,10 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-
+  
   c->proc = 0;
   for (;;) {
+    
     // The most recent process to run may have had interrupts
     // turned off; enable them to avoid a deadlock if all
     // processes are waiting. Then turn them back off
@@ -507,33 +508,74 @@ scheduler(void)
     // and wfi.
     intr_on();
     intr_off();
+    int epoch = 0;
+    epoch++;
 
-    int found = 0;
+    if (mode) {
+      printk("=========================Epoch #%d====================\n", epoch);
+    }
+
+    int total_weight = 0;
+
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if (p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
 
-        if (mode == 1) {
-          printk("PID=%d Priority=%d\n", p->pid, p->priority);
-        }
-        
-        swtch(&c->context, &p->context);
-
-        // Don't re-enable interrupts on release.
-        mycpu()->intena = 0;
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        found = 1;
+        total_weight += (20 - p->priority);
       }
       release(&p->lock);
     }
+
+    if(total_weight == 0) {
+      asm volatile("wfi");
+      continue;
+    }
+
+    int found = 0;
+  
+    for (p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock);
+      if (p->state == RUNNABLE) {
+
+        p->num_epoch_slots = (40 * (20 - p->priority)) / total_weight;
+
+        if (mode) {
+          printk("Process: %s\n", p->name);
+          printk("PID: %d\n", p->pid);
+          printk("Priority: %d\n", p->priority);
+          printk("Num Slots: %d\n", p->num_epoch_slots);
+        }
+      }
+
+      int count = 0;
+      int original_slots = p->num_epoch_slots;
+
+      while (p->state == RUNNABLE && p->num_epoch_slots > 0) {
+        if (mode){
+          ++count;
+          printk("Running process %s with PID %d and priority %d for %d/%d\n", p->name, p->pid, p->priority, count, original_slots);
+        }
+      
+        (p->num_epoch_slots)--;
+
+        p->state = RUNNING;
+        c->proc = p;
+
+        swtch(&c->context, &p->context);
+
+        mycpu()->intena = 0;
+        c->proc = 0;
+
+        found = 1;
+
+        if(p->state != RUNNABLE) {
+          break;
+        }
+      }
+      release(&p->lock);
+    }
+
+
     if (found == 0) {
       // nothing to run; stop running on this core until an interrupt.
       asm volatile("wfi");
