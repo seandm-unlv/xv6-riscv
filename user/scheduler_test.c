@@ -69,7 +69,8 @@ main(int argc, char *argv[])
     debug_val = atoi(buffer);
 
     if(debug_val != 0 && debug_val != 1) {
-        printf("Debug Value must be 0 or 1\n");
+        printf("Invalid Debug Value! Continuing with debug=1");
+        debug_val = 1;
         exit(1);
     }
 
