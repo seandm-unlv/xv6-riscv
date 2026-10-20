@@ -57,17 +57,26 @@ main(int argc, char *argv[])
 {
     
     int debug_val;
-    char debug_char[2];
+    int end;
+    char buffer[16];
     int priorities[8] = {0, 0, 5, 5, 10, 10, 15, 15};
 
     printf("Enter a Debug Value (Must be either 0 or 1):\n");
-    read(0, debug_char, 2);
-    debug_char[1] = '\0';
+    
+    end = read(0, buffer, sizeof(buffer)-1);
+    buffer[end] = '\0';
 
-    debug_val = atoi(debug_char);
+    debug_val = atoi(buffer);
+
+    if(debug_val != 0 && debug_val != 1) {
+        printf("Debug Value must be 0 or 1\n");
+        exit(1);
+    }
+
     debug(debug_val);
 
     for(int i = 0; i < 8; i++){
+        
         int pid = priorityfork(priorities[i]);
 
         if(pid == 0){
