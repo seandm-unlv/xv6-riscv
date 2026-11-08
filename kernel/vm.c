@@ -489,3 +489,27 @@ ismapped(pagetable_t pagetable, uint64 va)
   }
   return 0;
 }
+
+int
+trackframes(pagetable_t pagetable)
+{
+  int count = 0;
+
+  // there are 2^9 = 512 PTEs in a page table.
+  for (int i = 0; i < 512; i++) {
+
+    pte_t pte = pagetable[i];
+    
+    if ((pte & PTE_V) && (pte & (PTE_R | PTE_W | PTE_X)) == 0) 
+    {
+      uint64 child = PTE2PA(pte);
+      count += trackframes((pagetable_t)child);
+    } 
+    else if (pte & PTE_V) 
+    {
+      count++;
+    }
+  }
+
+  return count;
+}
