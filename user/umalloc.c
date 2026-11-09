@@ -18,6 +18,15 @@ union header {
 
 typedef union header Header;
 
+// added in project 4 ------
+const uint NSIZES = 8;
+const uint PGSIZE = 4096;
+
+static uint sizes[NSIZES] = {16, 32, 64, 128, 256, 512, 1024, 2048};
+
+static Header *freelists[NSIZES];
+// ------------------------
+
 static Header base;
 static Header *freep;
 
@@ -87,4 +96,88 @@ malloc(uint nbytes)
       if ((p = morecore(nunits)) == 0)
         return 0;
   }
+}
+
+static int
+get_ptr(int nbytes)
+{
+  for (int i = 0; i < NSIZES; ++i)
+  {
+    if (nbytes <= sizes[i])
+    {
+      return sizes[i];
+    }
+  }
+
+  return -1;
+}
+
+void * 
+block_alloc(int nbytes)
+{
+    Header *b;
+    int idx;
+    int bsize;
+    int nblocks;
+    char *page;
+
+    idx = get_ptr(nbytes);
+
+    if(idx < 0)
+    {
+      return 0;
+    }
+
+    bsize = sizes[idx];
+
+    if(freelists[idx] == 0)
+    {
+      page = sbrk(PGSIZE);
+    
+      if(page == SBRK_ERROR)
+      {
+        return 0;
+      }
+        
+      nblocks = PGSIZE / bsize;
+
+      for(int i = 0; i < nblocks; i++){
+        b = (Header *)(page + i * bsize);
+
+        b->s.ptr = idx;
+
+        if(i == nblocks - 1)
+        {
+          b->s.ptr = 0;
+        }
+        else
+        {
+          b->s.ptr = (Header *)(page + (i + 1) * bsize);  
+        }
+      }
+      freelists[idx] = (Header *)page;
+    }
+
+    b = freelists[idx];
+    freelists[idx] = b->s.ptr;
+
+    return (void *)(b + 1);
+  }
+
+
+void
+block_free(void *ptr)
+{
+  Header *b;
+  int idx;
+
+  if(ptr == 0)
+    return;
+
+  b = (Header *)ptr - 1;
+
+  idx = b->s.ptr;
+
+  b->s.ptr = freelists[idx];
+  freelists[idx] = b;
 }
