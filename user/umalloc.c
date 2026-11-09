@@ -22,7 +22,7 @@ typedef union header Header;
 #define NSIZES 8
 const uint PGSIZE = 4096;
 
-static uint sizes[8] = {16, 32, 64, 128, 256, 512, 1024, 2048};
+static uint sizes[8] = {32, 64, 128, 256, 512, 1024, 2048, 4096};
 
 static Header *freelists[NSIZES];
 // ------------------------
@@ -105,7 +105,7 @@ get_ptr(int nbytes)
   {
     if (nbytes <= sizes[i])
     {
-      return sizes[i];
+      return i;
     }
   }
 
