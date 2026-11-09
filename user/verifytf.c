@@ -1,45 +1,68 @@
 #include "kernel/types.h"
 #include "user/user.h"
 
-#define MAX_ALLOCS 1024
+#define MAXBLOCKS 256
+#define PGSIZE 4096
 
 int
 main(void)
 {
-    void *ptrs[MAX_ALLOCS];
+    void *ptrs[MAXBLOCKS];
     int nalloc = 0;
 
     int initial = trackframes();
-    printf("Initial frames: %d\n", initial);
 
-    while(nalloc < MAX_ALLOCS){
+    
+    printf("First Allocation:\n");
+
+    while(nalloc < MAXBLOCKS) {
         ptrs[nalloc] = block_alloc(28);
 
-        if(ptrs[nalloc] == 0){
+        if(ptrs[nalloc] == 0) {
             printf("allocation failed\n");
             exit(1);
         }
 
-        nalloc++;
+        uint64 addr = (uint64)ptrs[nalloc];
+        uint64 page = addr & ~(PGSIZE - 1);
+
+        printf("Allocated 32-byte chunk at %p (page %p)\n",
+               ptrs[nalloc], (void*)page);
 
         int current = trackframes();
-        printf("Frames after allocation %d: %d\n",
-               nalloc, current);
+        if(nalloc == 0)
+        {
+            printf("Process page table has %d frames.\n",current);
+        }
+            
+        else
+        {
+            printf("Current page count: %d\n", current);
+        }
 
-        if(current > initial){
-            printf("Frame count increased.\n");
+        nalloc++;
 
-            for(int i = 0; i < nalloc; i++)
-                block_free(ptrs[i]);
-
-            exit(0);
+        if(current > initial) {
+            printf("Frames allocated: %d\n", nalloc);
+            break;
         }
     }
 
-    printf("Exceeded allocation limit.\n");
+    printf("=================================================\n");
+    printf("Beginning block_free\n");
+    printf("=================================================\n");
 
-    for(int i = 0; i < nalloc; i++)
+    for(int i = 0; i < nalloc; i++) {
+        uint64 addr = (uint64)ptrs[i];
+        uint64 page = addr & ~(PGSIZE - 1);
+
+        printf("Freed 32-byte chunk at 0x%p (page 0x%p)\n",
+               ptrs[i], (void*)page);
+
         block_free(ptrs[i]);
+    }
 
-    exit(1);
+    printf("All blocks freed.\n");
+
+    exit(0);
 }
