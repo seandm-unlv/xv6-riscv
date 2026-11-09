@@ -22,7 +22,7 @@ typedef union header Header;
 const uint NSIZES = 8;
 const uint PGSIZE = 4096;
 
-static uint sizes[NSIZES] = {16, 32, 64, 128, 256, 512, 1024, 2048};
+static uint sizes[8] = {16, 32, 64, 128, 256, 512, 1024, 2048};
 
 static Header *freelists[NSIZES];
 // ------------------------
