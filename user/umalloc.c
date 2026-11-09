@@ -144,7 +144,7 @@ block_alloc(int nbytes)
       for(int i = 0; i < nblocks; i++){
         b = (Header *)(page + i * bsize);
 
-        b->s.ptr = idx;
+        b->s.size = idx;
 
         if(i == nblocks - 1)
         {
@@ -176,7 +176,7 @@ block_free(void *ptr)
 
   b = (Header *)ptr - 1;
 
-  idx = b->s.ptr;
+  idx = b->s.size;
 
   b->s.ptr = freelists[idx];
   freelists[idx] = b;
