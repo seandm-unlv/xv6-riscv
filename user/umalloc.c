@@ -19,7 +19,7 @@ union header {
 typedef union header Header;
 
 // added in project 4 ------
-const uint NSIZES = 8;
+#define NSIZES 8
 const uint PGSIZE = 4096;
 
 static uint sizes[8] = {16, 32, 64, 128, 256, 512, 1024, 2048};
